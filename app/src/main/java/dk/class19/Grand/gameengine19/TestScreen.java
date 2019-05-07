@@ -11,20 +11,11 @@ import java.util.Random;
 
 public class TestScreen extends Screen
 {
-    List<Bob> mobSpawner = new ArrayList<>();
-    Bob bob = new Bob();
-    Random random = new Random();
-    int x = 0;
-    int touchX = 0;
-    int y = 0;
-    int touchY = 0;
-    Bitmap bitmap;
     Sound sound;
     Music backgroundMusic;
     Bitmap red;
     Bitmap green;
     Bitmap button;
-    boolean isPlaying = false;
     List<TouchEvent> touchEventBuffer;
 
 
@@ -37,13 +28,11 @@ public class TestScreen extends Screen
         button = gameEngine.loadBitmap("Duck.png");
         sound = gameEngine.loadSound("Breakout/blocksplosion.wav");
         backgroundMusic = gameEngine.loadMusic("Breakout/Glorious_morning.mp3");
-        isPlaying = true;
     }
 
     @Override
     public void update(float deltaTime)
     {
-        //Log.d("Testscreen", "FPS: " + gameEngine.getFramesPerSecond());
         gameEngine.clearFrameBuffer(Color.GRAY);
 
 
