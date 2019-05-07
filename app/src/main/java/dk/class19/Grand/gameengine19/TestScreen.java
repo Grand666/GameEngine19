@@ -111,7 +111,20 @@ public class TestScreen extends Screen
             gameEngine.drawBitmap(red, 1700, 400);
         }
 
-        //On action up do jump player 2
+        //Down do Jump or duck for first press
+
+        //Action_Down do duck
+
+        //Action_Up do jump
+
+
+
+
+        //New GameMechanic! Down: Duck till release
+
+        //On Up do jump
+
+        ////Unless it's been held down for 1 sec ///Wait with hitbox change
 
 
 
