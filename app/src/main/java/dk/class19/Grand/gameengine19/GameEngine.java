@@ -19,10 +19,13 @@ import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +82,7 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
         setContentView(surfaceView);
         surfaceHolder = surfaceView.getHolder();
         screen = createStartScreen();
+
 
 
         touchHandler = new MultiTouchHandler(surfaceView, touchEventBuffer, touchEventPool);
@@ -254,6 +258,22 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
         return scaledY;
     }
 
+    public int getRawTouchX(int pointer)
+    {
+        int scaledX = 0;
+        scaledX = (int)((float)touchHandler.getRawTouchX(pointer)*(float)offScreenSurface.getWidth()
+                /(float) surfaceView.getWidth());
+        return scaledX;
+    }
+
+    public int getRawTouchY(int pointer)
+    {
+        int scaledY = 0;
+        scaledY = (int)((float)touchHandler.getRawTouchY(pointer)*(float)offScreenSurface.getHeight()
+                /(float) surfaceView.getHeight());
+        return scaledY;
+    }
+
     public float[] getAccelerometer()
     {
         return accelerometer;
@@ -278,7 +298,6 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
             for (int i = 0; i < stop; i++)
             {
                 touchEventCopied.add(touchEventBuffer.get(i));
-
             }
             touchEventBuffer.clear();
         }
@@ -346,11 +365,11 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
                     fillEvents();
                     currentTime = System.nanoTime();
 
-
                     if (screen != null) screen.update((currentTime - lastTime)/1000000000.0f);
                     lastTime = currentTime;
 
                     freeEvents();
+
                     //Logic screen
                     src.left = 0;
                     src.top = 0;
@@ -376,6 +395,7 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
                     startTime = System.nanoTime();
 
                 }
+                touchEventCopied.clear();
             }//End of synchronised
         }//End of while loop
     }
@@ -408,24 +428,14 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
         super.onResume();
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            setOffScreenSurface(480, 320);
+            //setOffScreenSurface(480, 320);
+            setOffScreenSurface(1920, 1080);
         }
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            setOffScreenSurface(320, 480);
+            //setOffScreenSurface(320, 480);
+            setOffScreenSurface(1080, 1920);
         }
 
-        /*
-        if (surfaceView.getWidth() > surfaceView.getHeight()){
-            //setOffScreenSurface(1920, 1080);
-            setOffScreenSurface(480, 320);
-        }
-        else
-        {
-            //setOffScreenSurface(1080, 1920);
-            setOffScreenSurface(320, 480);
-        }
-        setOffScreenSurface(480, 320);
-        */
         mainLoopThread = new Thread(this);
         mainLoopThread.start();
         synchronized (stateChanges)

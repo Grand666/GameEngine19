@@ -3,6 +3,7 @@ package dk.class19.Grand.gameengine19;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,20 @@ public class TestScreen extends Screen
     Bitmap bitmap;
     Sound sound;
     Music backgroundMusic;
+    Bitmap red;
+    Bitmap green;
+    Bitmap button;
     boolean isPlaying = false;
+    List<TouchEvent> touchEventBuffer;
+
+
 
     public TestScreen(GameEngine gameEngine)
     {
         super(gameEngine);
-        bitmap = gameEngine.loadBitmap("bob.png");
+        red = gameEngine.loadBitmap("red.png");
+        green = gameEngine.loadBitmap("green.png");
+        button = gameEngine.loadBitmap("Duck.png");
         sound = gameEngine.loadSound("Breakout/blocksplosion.wav");
         backgroundMusic = gameEngine.loadMusic("Breakout/Glorious_morning.mp3");
         isPlaying = true;
@@ -34,77 +43,91 @@ public class TestScreen extends Screen
     @Override
     public void update(float deltaTime)
     {
-        Log.d("Testscreen", "FPS: " + gameEngine.getFramesPerSecond());
+        //Log.d("Testscreen", "FPS: " + gameEngine.getFramesPerSecond());
+        gameEngine.clearFrameBuffer(Color.GRAY);
 
-        if(x < 1080 + 64)
+
+        gameEngine.drawBitmap(button, 100, 800);
+        gameEngine.drawBitmap(button, 1700, 800);
+
+        boolean pressed = false;
+        boolean pressed1 = false;
+
+        touchEventBuffer = gameEngine.getTouchEvents();
+
+        for (int i = 0; i < touchEventBuffer.size(); i++)
         {
-            x += 100 * deltaTime;
-        }
-        else
-        {
-            x = 0;
-        }
-
-
-/*
-        if (mobSpawner.size() <= 10)
-        {
-
-            x = random.nextInt(900);
-            y = random.nextInt(1700);
-
-            bob.setBitmap(gameEngine.loadBitmap("bob.png"));
-            bob.setX(x);
-            bob.setY(y);
-            mobSpawner.add(bob);
-
-            gameEngine.drawBitmap(bob.getBitmap(), x, y);
-
-        }
-*/
-        if (gameEngine.isTouchDown(0))
-        {
-            x = gameEngine.getTouchX(0);
-            y = gameEngine.getTouchY(0);
-            sound.play(1);
-
-            if(backgroundMusic.isPlaying())
+            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Down)
             {
-                backgroundMusic.pause();
-                isPlaying = false;
-            }
-            else
-            {
-                backgroundMusic.play();
-                isPlaying = true;
-            }
-
-            /*
-            if (bob.hitbox().contains(touchX,touchY))
-            {
-                for (int i = 0; i < mobSpawner.size(); i++)
+                Log.d("", "Down");
+                if (gameEngine.isTouchDown(0))
                 {
-                    if (mobSpawner.get(i).hitbox() == bob.hitbox())
+                    if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 800)
                     {
-                        mobSpawner.remove(i);
+                        if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 900)
+                        {
+                            pressed = true;
+                        }
+                    }
+                    if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
+                    {
+                        if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
+                        {
+                            pressed1 = true;
+                        }
                     }
                 }
             }
-
-*/
+            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Up)
+            {
+                Log.d("", "Up");
+            }
+            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionUp)
+            {
+                Log.d("", "Action_Up");
+            }
+            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionDown)
+            {
+                Log.d("", "ActionDown_X");
+                if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 800)
+                {
+                    if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 900)
+                    {
+                        pressed1 = true;
+                    }
+                }
+                if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
+                {
+                    if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
+                    {
+                        pressed = true;
+                    }
+                }
+            }
         }
 
+        if (pressed)
+        {
+            gameEngine.drawBitmap(green, 100, 400);
+        }else
+        {
+            gameEngine.drawBitmap(red, 100, 400);
+        }
 
-//        float x = gameEngine.getAccelerometer()[0];
-//        float y = -1 * gameEngine.getAccelerometer()[1];
+        if (pressed1)
+        {
+            gameEngine.drawBitmap(green, 1700, 400);
+        }else
+        {
+            gameEngine.drawBitmap(red, 1700, 400);
+        }
+
+        //On action up do jump player 2
 
 
-//        x = gameEngine.getFrameBufferWidth()/2 + x/10 * gameEngine.getFrameBufferWidth()/2;
-//        y = gameEngine.getFrameBufferHeight()/2 + y/10 * gameEngine.getFrameBufferHeight()/2;
-//        gameEngine.drawBitmap(bitmap, x , y );
 
-        gameEngine.clearFrameBuffer(Color.GRAY);
-        gameEngine.drawBitmap(bitmap, (int)x - 64, (int)y - 64);
+
+
     }
 
     @Override
@@ -124,4 +147,5 @@ public class TestScreen extends Screen
     {
 
     }
+
 }
