@@ -2,6 +2,7 @@ package dk.class19.Grand.gameengine19.DinoDodge;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class GameScreenDD extends Screen
     Sound gameoverSound;
     int roadSpeed = 350;
 
-    public GameScreenDD(GameEngine gameEngine)
+    public GameScreenDD(GameEngine gameEngine, float deltaTime)
     {
         super(gameEngine);
         backGround = gameEngine.loadBitmap("DinoDodge/GameScreenDD.png");
@@ -70,7 +71,7 @@ public class GameScreenDD extends Screen
 
             }
         }, roadSpeed);
-        renderer = new WorldRenderer(gameEngine, world);
+        renderer = new WorldRenderer(gameEngine, world, deltaTime);
 
     }
 
@@ -128,7 +129,7 @@ public class GameScreenDD extends Screen
         }
         gameEngine.drawBitmap(backGround, 0, 0, (int)backGroundX, 0, 1920, 1080);
         gameEngine.drawBitmap(backGround, 0, 0, (int)backGroundTopX, 0, 1920, 360);
-        renderer.render();
+        renderer.render(deltaTime);
 
         if (state == State.Paused)
         {
@@ -166,4 +167,7 @@ public class GameScreenDD extends Screen
     {
 
     }
+
+
+
 }

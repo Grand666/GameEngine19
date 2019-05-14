@@ -19,6 +19,7 @@ import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -54,7 +55,8 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
     long lastTime = 0;
     Paint paint = new Paint();
     public Music music;
-
+    public boolean volUp = false;
+    public boolean volDown = false;
 
 
 
@@ -82,6 +84,7 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
         setContentView(surfaceView);
         surfaceHolder = surfaceView.getHolder();
         screen = createStartScreen();
+
 
 
 
@@ -422,6 +425,33 @@ public abstract class GameEngine extends Activity implements Runnable, TouchHand
         }
 
     }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    volUp = true;
+                }
+                if (action == KeyEvent.ACTION_UP) {
+                    volUp = false;
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    volDown = true;
+                }
+                if (action == KeyEvent.ACTION_UP) {
+                    volDown = false;
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
 
     public void onResume()
     {

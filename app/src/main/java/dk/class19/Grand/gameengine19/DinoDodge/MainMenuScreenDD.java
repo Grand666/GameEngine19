@@ -25,7 +25,7 @@ public class MainMenuScreenDD extends Screen
     {
         if (gameEngine.isTouchDown(0) && (passedTime) > 0.5f)
         {
-            gameEngine.setScreen(new GameScreenDD(gameEngine));
+            gameEngine.setScreen(new GameScreenDD(gameEngine, deltaTime));
             return;
         }
         gameEngine.drawBitmap(background, 0, 0);

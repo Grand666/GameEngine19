@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dk.class19.Grand.gameengine19.PhilipMiniQuiz"
+    package="dk.class19.Grand.gameengine19.DinoDodge"
     android:installLocation="preferExternal"
     >
 
@@ -11,9 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QuizGame"
+        <activity android:name=".DinoDodge"
                   android:configChanges="keyboard|keyboardHidden|orientation"
-                  android:screenOrientation="portrait"
+                  android:screenOrientation="landscape"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

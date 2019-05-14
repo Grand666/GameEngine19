@@ -1,6 +1,8 @@
 package dk.class19.Grand.gameengine19.DinoDodge;
 
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class World
     boolean ducking1 = false;
     boolean jumping1 = false;
     int help = 0;
+    List<TouchEvent> touchEventBuffer;
 
     public World(GameEngine gameEngine, CollisionListener listener, int roadSpeed)
     {
@@ -46,14 +49,13 @@ public class World
         this.listener = listener;
         initializeEnemies();
         dino1.x = dino1.x + 220;
+
     }
 
     public void update(float deltaTime)
     {
-        /*if(gameEngine.isTouchDown(1))
-        {
-            Log.d("teat", gameEngine.getTouchX(0) + " " + gameEngine.getTouchX(1));
-        }*/
+        touchEventBuffer = gameEngine.getTouchEvents();
+
         //Player 1 jumping movement
         ducking = false;
 
@@ -86,7 +88,43 @@ public class World
             dino1.y = (int) MAX_Y - Dino.HEIGHT;
         }
 
+
+        for (int i = 0; i < touchEventBuffer.size(); i++)
+        {
+            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Down)
+            {
+                Log.d("Down", "Pointer 0");
+
+            }
+            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Up)
+            {
+                Log.d("Up", "Pointer 0");
+
+            }
+            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionDown)
+            {
+                Log.d("ActionDown", "Pointer 1");
+
+            }
+            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionUp)
+            {
+                Log.d("ActionUp", "Pointer 1");
+
+            }
+        }
+
         //Player 1
+
+        if (gameEngine.volDown)
+        {
+            ducking = true;
+        }
+        if (gameEngine.volUp && !jumping)
+        {
+            jumpingSpeed = dino.jumpSpeed;
+            jumping = true;
+            topReached = false;
+        }
 
         if (gameEngine.isTouchDown(0) && !gameEngine.isTouchDown(1) && !jumping && gameEngine.getTouchX(0) < 400)
         {
@@ -188,7 +226,7 @@ public class World
             }
         }
 
-        collideDinoEnemy();
+        //collideDinoEnemy();
 
     }
 
@@ -271,6 +309,7 @@ public class World
         }
 
     }
+
 
 
 
