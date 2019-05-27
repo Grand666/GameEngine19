@@ -40,44 +40,15 @@ public class MultiTouchHandler implements TouchHandler, View.OnTouchListener
         switch (action)
         {
             case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
                 touchEvent = touchEventPool.obtains();
                 touchEvent.type = TouchEvent.TouchEventType.Down;
                 touchEvent.pointer = pointerId;
 
-                touchEvent.rawX = (int) event.getRawX();
-                touchRawX[pointerId] = touchEvent.rawX;
-
-                touchEvent.rawY = (int) event.getRawY();
-                touchRawY[pointerId] = touchEvent.rawY;
-
-                touchEvent.x = (int)event.getX();
+                touchEvent.x = (int)event.getX(pointerId);
                 touchX[pointerId] = touchEvent.x;
 
-                touchEvent.y = (int)event.getY();
-                touchY[pointerId] = touchEvent.y;
-
-                isTouched[pointerId] = true;
-
-                synchronized (touchEventBuffer)
-                {
-                    touchEventBuffer.add(touchEvent);
-                }
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                touchEvent = touchEventPool.obtains();
-                touchEvent.type = TouchEvent.TouchEventType.ActionDown;
-                touchEvent.pointer = pointerId;
-
-                touchEvent.rawX = (int) event.getRawX();
-                touchRawX[pointerId] = touchEvent.rawX;
-
-                touchEvent.rawY = (int) event.getRawY();
-                touchRawY[pointerId] = touchEvent.rawY;
-
-                touchEvent.x = (int)event.getX();
-                touchX[pointerId] = touchEvent.x;
-
-                touchEvent.y = (int)event.getY();
+                touchEvent.y = (int)event.getY(pointerId);
                 touchY[pointerId] = touchEvent.y;
 
                 isTouched[pointerId] = true;
@@ -88,23 +59,6 @@ public class MultiTouchHandler implements TouchHandler, View.OnTouchListener
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                touchEvent = touchEventPool.obtains();
-                touchEvent.type = TouchEvent.TouchEventType.ActionUp;
-                touchEvent.pointer = pointerId;
-
-                touchEvent.x = (int)event.getX();
-                touchX[pointerId] = touchEvent.x;
-
-                touchEvent.y = (int)event.getY();
-                touchY[pointerId] = touchEvent.y;
-
-                isTouched[pointerId] = false;
-
-                synchronized (touchEventBuffer)
-                {
-                    touchEventBuffer.add(touchEvent);
-                }
-                break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 touchEvent = touchEventPool.obtains();
@@ -134,10 +88,10 @@ public class MultiTouchHandler implements TouchHandler, View.OnTouchListener
                         touchEvent.type = TouchEvent.TouchEventType.Dragged;
                         touchEvent.pointer = pointerId;
 
-                        touchEvent.x = (int)event.getX();
+                        touchEvent.x = (int)event.getX(i);
                         touchX[pointerId] = touchEvent.x;
 
-                        touchEvent.y = (int)event.getY();
+                        touchEvent.y = (int)event.getY(i);
                         touchY[pointerId] = touchEvent.y;
 
                         isTouched[pointerId] = true;

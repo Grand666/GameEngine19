@@ -27,8 +27,8 @@ public class WorldRenderer
         playerImg1 = gameEngine.loadBitmap("DinoDodge/Duck1.png");
         player1Img = gameEngine.loadBitmap("DinoDodge/Run1.2.png");
         player1Img1 = gameEngine.loadBitmap("DinoDodge/Duck1.2.png");
-        jumpImg = gameEngine.loadBitmap("DinoDodge/Jump.png");
-        duckImg = gameEngine.loadBitmap("DinoDodge/Duck.png");
+        jumpImg = gameEngine.loadBitmap("DinoDodge/JumpButton.png");
+        duckImg = gameEngine.loadBitmap("DinoDodge/DuckButton.png");
         blockImg = gameEngine.loadBitmap("DinoDodge/BlockF.png");
     }
 

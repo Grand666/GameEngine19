@@ -17,6 +17,8 @@ public class TestScreen extends Screen
     Bitmap green;
     Bitmap button;
     List<TouchEvent> touchEventBuffer;
+    boolean pressed = false;
+    boolean pressed1 = false;
 
 
 
@@ -39,61 +41,65 @@ public class TestScreen extends Screen
         gameEngine.drawBitmap(button, 100, 800);
         gameEngine.drawBitmap(button, 1700, 800);
 
-        boolean pressed = false;
-        boolean pressed1 = false;
-
-        touchEventBuffer = gameEngine.getTouchEvents();
-
-        for (int i = 0; i < touchEventBuffer.size(); i++)
+        if(!gameEngine.isTouchDown(0))
         {
-            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Down)
-            {
-                Log.d("", "Down");
-                if (gameEngine.isTouchDown(0))
-                {
-                    if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 800)
-                    {
-                        if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 900)
-                        {
-                            pressed = true;
-                        }
-                    }
-                    if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
-                    {
-                        if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
-                        {
-                            pressed1 = true;
-                        }
-                    }
-                }
-            }
-            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Up)
-            {
-                Log.d("", "Up");
-            }
-            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionUp)
-            {
-                Log.d("", "Action_Up");
-            }
-            if (touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionDown)
-            {
-                Log.d("", "ActionDown_X");
-                if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 800)
-                {
-                    if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 900)
-                    {
-                        pressed1 = true;
-                    }
-                }
-                if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
-                {
-                    if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
-                    {
-                        pressed = true;
-                    }
-                }
-            }
+            Log.d("da", "sss");
+            pressed = false;
+            pressed1 = false;
         }
+
+        if(gameEngine.isTouchDown(0))
+        {
+            if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 800)
+            {
+                if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 900)
+                {
+                    pressed = true;
+                }
+            }
+            if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
+            {
+                if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
+                {
+                    pressed1 = true;
+                }
+            }
+
+        }
+
+
+        /*if(gameEngine.isTouchDown(1))
+        {
+            if (gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
+            {
+                if (gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
+                {
+                    if (gameEngine.getTouchX(1) > 100 && gameEngine.getTouchY(1) > 800)
+                    {
+                        if (gameEngine.getTouchX(1) < 200 && gameEngine.getTouchY(1) < 900)
+                        {
+                            Log.d("test", "update: " + gameEngine.getTouchX(0) + " " + gameEngine.getTouchY(0));
+                            Log.d("test", "u111    " + gameEngine.getTouchX(1) + " " + gameEngine.getTouchY(1));
+                            pressed = true;
+                            pressed1 = true;
+
+                        }
+                    }
+                }
+            }
+
+            if (gameEngine.getTouchX(1) < 200 && gameEngine.getTouchY(1) > 800
+                    && gameEngine.getTouchX(0) < 1800 && gameEngine.getTouchY(0) > 800)
+            {
+                if (gameEngine.getTouchX(1) > 100 && gameEngine.getTouchY(1) < 900 &&
+                        gameEngine.getTouchX(0) > 1700 && gameEngine.getTouchY(0) < 900)
+                {
+                    pressed1 = true;
+                    pressed = true;
+                }
+            }
+        }*/
+
 
         if (pressed)
         {
@@ -110,6 +116,7 @@ public class TestScreen extends Screen
         {
             gameEngine.drawBitmap(red, 1700, 400);
         }
+
 
         //Down do Jump or duck for first press
 

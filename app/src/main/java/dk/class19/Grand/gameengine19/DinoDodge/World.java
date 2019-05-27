@@ -1,46 +1,40 @@
 package dk.class19.Grand.gameengine19.DinoDodge;
 
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import dk.class19.Grand.gameengine19.GameEngine;
-import dk.class19.Grand.gameengine19.TouchEvent;
 
 public class World
 {
+    GameEngine gameEngine;
+    CollisionListener listener;
+
     public static final float MIN_X = 0;
     public static final float MAX_X = 1919;
     public static final float MIN_Y = 150;
     public static final float MAX_Y = 807;
 
-    //Car car = new Car();
-    Dino dino = new Dino();
-    Dino dino1 = new Dino();
-    List<BlockEnemy> blockEnemyList = new ArrayList<>();
-    public int maxEnemies = 4;
-
-    GameEngine gameEngine;
-    CollisionListener listener;
-
     boolean gameOver = false;
-    int points = 0;
-    int lives = 1;
-    int roadSpeed = 0;
-    boolean topReached = false;
-    boolean ducking = false;
-    boolean jumping = false;
-    int jumpingSpeed = 0;
-    int jumpingSpeed1 = 0;
-    boolean topReached1 = false;
-    boolean ducking1 = false;
-    boolean jumping1 = false;
-    int help = 0;
-    List<TouchEvent> touchEventBuffer;
+    int roadSpeed;
+
+    Dino p1Dino = new Dino();
+    boolean p1Alive = true;
+    boolean p1Ducking = false;
+    boolean p1Jumping = false;
+    int p1Velocity = 0;
+
+    Dino p2Dino = new Dino();
+    boolean p2Alive = true;
+    boolean p2Ducking = false;
+    boolean p2Jumping = false;
+    int p2Velocity = 0;
+
+    public int maxEnemies = 4;
+    List<BlockEnemy> blockEnemyList = new ArrayList<>();
 
     public World(GameEngine gameEngine, CollisionListener listener, int roadSpeed)
     {
@@ -48,108 +42,77 @@ public class World
         this.gameEngine = gameEngine;
         this.listener = listener;
         initializeEnemies();
-        dino1.x = dino1.x + 220;
-
+        p2Dino.x = p2Dino.x + 270;
     }
 
     public void update(float deltaTime)
     {
-        touchEventBuffer = gameEngine.getTouchEvents();
-
-        //Player 1 jumping movement
-        ducking = false;
-
-        if(jumping)
+        if(p1Alive)
         {
-            dino.y -= jumpingSpeed * deltaTime;
-            jumpingSpeed -= 70;
-        }
+            //Player 1 jump movement
+            p1Ducking = false;
 
-        if(dino.y + Dino.HEIGHT > MAX_Y - 1)
-        {
-            jumping = false;
-            topReached = false;
-            dino.y = (int) MAX_Y - Dino.HEIGHT;
+            if (p1Jumping)
+            {
+                p1Dino.y -= p1Velocity * deltaTime;
+                p1Velocity -= p1Dino.gravity * deltaTime;
+            }
+
+            if (p1Dino.y + Dino.HEIGHT > MAX_Y - 1)
+            {
+                p1Jumping = false;
+                p1Dino.y = (int) MAX_Y - Dino.HEIGHT;
+            }
+
+            //Player 1
+            if (gameEngine.volDown && !p1Jumping)
+            {
+                p1Ducking = true;
+            }
+
+            if (gameEngine.volUp && !p1Jumping)
+            {
+                p1Velocity = p1Dino.velocity;
+                p1Jumping = true;
+            }
+
+            if (gameEngine.isTouchDown(0) && !gameEngine.isTouchDown(1) && !p1Jumping && gameEngine.getTouchX(0) < 400)
+            {
+                if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 900)
+                {
+                    if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 1000)
+                    {
+                        p1Velocity = p1Dino.velocity;
+                        p1Jumping = true;
+                    }
+                }
+                if (gameEngine.getTouchX(0) < 350 && gameEngine.getTouchY(0) > 900)
+                {
+                    if (gameEngine.getTouchX(0) > 250 && gameEngine.getTouchY(0) < 1000)
+                    {
+                        p1Ducking = true;
+                    }
+                }
+            }
         }
 
         //Player 2 Jump movement
-        ducking1 = false;
+        p2Ducking = false;
 
-        if(jumping1)
+        if(p2Jumping)
         {
-            dino1.y -= jumpingSpeed1 * deltaTime;
-            jumpingSpeed1 -= 70;
+            p2Dino.y -= p2Velocity * deltaTime;
+            p2Velocity -= p2Dino.gravity * deltaTime;
         }
 
-        if(dino1.y + Dino.HEIGHT > MAX_Y - 1)
+        if(p2Dino.y + Dino.HEIGHT > MAX_Y - 1)
         {
-            jumping1 = false;
-            topReached1 = false;
-            dino1.y = (int) MAX_Y - Dino.HEIGHT;
-        }
-
-
-        for (int i = 0; i < touchEventBuffer.size(); i++)
-        {
-            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Down)
-            {
-                Log.d("Down", "Pointer 0");
-
-            }
-            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.Up)
-            {
-                Log.d("Up", "Pointer 0");
-
-            }
-            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionDown)
-            {
-                Log.d("ActionDown", "Pointer 1");
-
-            }
-            if(touchEventBuffer.get(i).type == TouchEvent.TouchEventType.ActionUp)
-            {
-                Log.d("ActionUp", "Pointer 1");
-
-            }
-        }
-
-        //Player 1
-
-        if (gameEngine.volDown)
-        {
-            ducking = true;
-        }
-        if (gameEngine.volUp && !jumping)
-        {
-            jumpingSpeed = dino.jumpSpeed;
-            jumping = true;
-            topReached = false;
-        }
-
-        if (gameEngine.isTouchDown(0) && !gameEngine.isTouchDown(1) && !jumping && gameEngine.getTouchX(0) < 400)
-        {
-            if (gameEngine.getTouchX(0) < 200 && gameEngine.getTouchY(0) > 900)
-            {
-                if (gameEngine.getTouchX(0) > 100 && gameEngine.getTouchY(0) < 1000)
-                {
-                    jumpingSpeed = dino.jumpSpeed;
-                    jumping = true;
-                    topReached = false;
-                }
-            }
-
-            if (gameEngine.getTouchX(0) < 350 && gameEngine.getTouchY(0) > 900)
-            {
-                if (gameEngine.getTouchX(0) > 250 && gameEngine.getTouchY(0) < 1000)
-                {
-                    ducking = true;
-                }
-            }
+            p2Jumping = false;
+            p2Dino.y = (int) MAX_Y - Dino.HEIGHT;
         }
 
         //Player 2
-
-        if (gameEngine.isTouchDown(0) && !jumping1 )
+        if (gameEngine.isTouchDown(0) && !p2Jumping)
         {
             if(!gameEngine.isTouchDown(1))
             {
@@ -157,17 +120,15 @@ public class World
                 {
                     if (gameEngine.getTouchX(0) > 1720 && gameEngine.getTouchY(0) < 1000)
                     {
-                        jumpingSpeed1 = dino1.jumpSpeed;
-                        jumping1 = true;
-                        topReached1 = false;
+                        p2Velocity = p2Dino.velocity;
+                        p2Jumping = true;
                     }
                 }
-
                 if (gameEngine.getTouchX(0) < 1670 && gameEngine.getTouchY(0) > 900)
                 {
                     if (gameEngine.getTouchX(0) > 1570 && gameEngine.getTouchY(0) < 1000)
                     {
-                        ducking1 = true;
+                        p2Ducking = true;
                     }
                 }
             }
@@ -183,11 +144,10 @@ public class World
             if (i == 0)
             {
                 prevBlockEnemy = blockEnemyList.get(i + maxEnemies - 1);
-            }else
+            } else
             {
                 prevBlockEnemy = blockEnemyList.get(i-1);
             }
-
 
             blockEnemy.x -= roadSpeed * deltaTime;
             if (blockEnemy.x < 0 - BlockEnemy.WIDTH)
@@ -203,45 +163,26 @@ public class World
                     {
                         blockEnemy.x = (1920 + randX) + random.nextInt(100) + BlockEnemy.WIDTH;
                         blockEnemy.y = 807 - BlockEnemy.HEIGHT;
-
                     } else
                     {
                         blockEnemy.x = (1920 + randX) + (prevBlockEnemy.x - 1920) + 200 + BlockEnemy.WIDTH;
                         blockEnemy.y = 807 - BlockEnemy.HEIGHT;
                     }
-                }else
+                } else
                 {
                     if (prevBlockEnemy.x < 1920)
                     {
                         blockEnemy.x = (1920 + randX) + random.nextInt(100) + BlockEnemy.WIDTH;
                         blockEnemy.y = 807 - BlockEnemy.HEIGHT - randY;
-
                     } else
                     {
                         blockEnemy.x = (1920 + randX) + (prevBlockEnemy.x - 1920) + 200 + BlockEnemy.WIDTH;
                         blockEnemy.y = 807 - BlockEnemy.HEIGHT - randY;
                     }
                 }
-
             }
         }
-
-        //collideDinoEnemy();
-
-    }
-
-    private boolean checkTouchEvents()
-    {
-        List<TouchEvent> events = gameEngine.getTouchEvents();
-        for (int i = 0; i < events.size(); i++)
-        {
-            if (events.get(i).type == TouchEvent.TouchEventType.Down)
-            {
-
-                return true;
-            }
-        }
-        return false;
+        collideDinoEnemy();
     }
 
     private boolean rectCollision(float x, float y, float width, float height,
@@ -261,31 +202,49 @@ public class World
         {
             blockEnemy = blockEnemyList.get(i);
 
-            if(ducking)
+            if (p1Alive)
             {
-                if (rectCollision(dino.x, dino.y + 100, Dino.WIDTH, Dino.HEIGHT,
-                        blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                if (p1Ducking)
                 {
-                    gameOver = true;
-                    Log.d("World", "collideCarMonster: GameOver");
-                }
-            }else
-            {
-                if (rectCollision(dino.x + (Dino.WIDTH / 3), dino.y, (Dino.WIDTH / 3), Dino.HEIGHT,
-                        blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                    if (rectCollision(p1Dino.x, p1Dino.y + 100, Dino.WIDTH, Dino.HEIGHT,
+                            blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                    {
+                        p1Alive = false;
+                    }
+                } else
                 {
-                    gameOver = true;
-                    Log.d("World", "collideCarMonster: GameOver");
+                    if (rectCollision(p1Dino.x + (Dino.WIDTH / 3.f), p1Dino.y, (Dino.WIDTH / 3.f), Dino.HEIGHT,
+                            blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                    {
+                        p1Alive = false;
+                    }
                 }
             }
 
+            if (p2Alive)
+            {
+                if (p2Ducking)
+                {
+                    if (rectCollision(p2Dino.x, p2Dino.y + 100, Dino.WIDTH, Dino.HEIGHT,
+                            blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                    {
+                        p2Alive = false;
+                    }
+                } else
+                {
+                    if (rectCollision(p2Dino.x + (Dino.WIDTH / 3.f), p2Dino.y, (Dino.WIDTH / 3.f), Dino.HEIGHT,
+                            blockEnemy.x, blockEnemy.y, BlockEnemy.WIDTH, BlockEnemy.HEIGHT))
+                    {
+                        p2Alive = false;
+                    }
+                }
+            }
         }
     }
 
     private void initializeEnemies()
     {
         Random random = new Random();
-
 
         for (int i = 0; i < maxEnemies; i++)
         {
@@ -307,10 +266,5 @@ public class World
                 blockEnemyList.add(blockEnemy);
             }
         }
-
     }
-
-
-
-
 }

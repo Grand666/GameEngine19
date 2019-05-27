@@ -1,8 +1,9 @@
 package dk.class19.Grand.gameengine19.DinoDodge;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
-import android.view.KeyEvent;
 
 import java.util.List;
 
@@ -24,22 +25,38 @@ public class GameScreenDD extends Screen
     WorldRenderer renderer = null;
 
     State state = State.Running;
+    Bitmap ground;
+    Bitmap cloud1;
+    Bitmap cloud2;
+    Bitmap cloud3;
+    Bitmap cloud4;
     Bitmap backGround;
-    Bitmap backGroundTop;
+    Bitmap backGroundFront;
+    Bitmap backGroundMiddle;
     Bitmap gameOver;
     Bitmap resume;
     float backGroundX = 0;
-    float backGroundTopX = 0;
+    float backGroundMiddleX = 0;
+    float backGroundFrontX = 0;
     Sound bounceSound;
     Sound crashSound;
     Sound gameoverSound;
     int roadSpeed = 350;
+    Typeface font;
+    String showText = "No text was found";
+    int score = 0;
 
     public GameScreenDD(GameEngine gameEngine, float deltaTime)
     {
         super(gameEngine);
-        backGround = gameEngine.loadBitmap("DinoDodge/GameScreenDD.png");
-        backGroundTop = gameEngine.loadBitmap("DinoDodge/GameScreenTopDD.png");
+        ground = gameEngine.loadBitmap("DinoDodge/Ground.png");
+        cloud1 = gameEngine.loadBitmap("DinoDodge/clouds_1.png");
+        cloud2 = gameEngine.loadBitmap("DinoDodge/clouds_2.png");
+        cloud3 = gameEngine.loadBitmap("DinoDodge/clouds_3.png");
+        cloud4 = gameEngine.loadBitmap("DinoDodge/clouds_4.png");
+        backGround = gameEngine.loadBitmap("DinoDodge/sky-2.png");
+        backGroundFront = gameEngine.loadBitmap("DinoDodge/rocks_2-2.png");
+        backGroundMiddle = gameEngine.loadBitmap("DinoDodge/rocks_1-2.png");
         gameOver = gameEngine.loadBitmap("CarScroller/gameover.png");
         resume = gameEngine.loadBitmap("CarScroller/resume.png");
         bounceSound = gameEngine.loadSound("CarScroller/bounce.wav");
@@ -64,15 +81,8 @@ public class GameScreenDD extends Screen
             {
                 gameoverSound.play(1);
             }
-
-            @Override
-            public void coin()
-            {
-
-            }
         }, roadSpeed);
         renderer = new WorldRenderer(gameEngine, world, deltaTime);
-
     }
 
     @Override
@@ -115,20 +125,31 @@ public class GameScreenDD extends Screen
 
         if (state == State.Running)
         {
-            backGroundX = backGroundX + roadSpeed * deltaTime;
-            backGroundTopX = backGroundTopX + (roadSpeed/3) * deltaTime;
-            if (backGroundX > 4920 - 1920)
+            backGroundMiddleX = backGroundMiddleX + (roadSpeed/3.f) * deltaTime;
+            backGroundFrontX = backGroundFrontX + (roadSpeed/2.f) * deltaTime;
+            backGroundX = backGroundX + (roadSpeed/4.f) * deltaTime;
+            if (backGroundX > 3840 - 1920)
             {
                 backGroundX = 0;
             }
-            if (backGroundTopX > 4920 - 1920)
+            if (backGroundMiddleX > 3840 - 1920)
             {
-                backGroundTopX = 0;
+                backGroundMiddleX = 0;
             }
+            if (backGroundFrontX > 3840 - 1920)
+            {
+                backGroundFrontX = 0;
+            }
+            showText = "Score: " + score;
+            score++;
             world.update(deltaTime);
         }
-        gameEngine.drawBitmap(backGround, 0, 0, (int)backGroundX, 0, 1920, 1080);
-        gameEngine.drawBitmap(backGround, 0, 0, (int)backGroundTopX, 0, 1920, 360);
+        gameEngine.drawBitmap(backGround, 0, -273, 0, 0, 1920, 1080);
+        gameEngine.drawBitmap(backGroundMiddle, 0, -273, (int)backGroundMiddleX, 0, 1920, 1080);
+        gameEngine.drawBitmap(cloud1, 0, 0, (int) backGroundX, 0, 1920, 1080);
+        gameEngine.drawBitmap(backGroundFront, 0, -273, (int) backGroundFrontX, 0, 1920, 1080);
+        gameEngine.drawBitmap(ground, 0, 807, 0, 0, 1920, 1080);
+        gameEngine.drawText(font, showText, 720, 940, Color.BLACK, 100);
         renderer.render(deltaTime);
 
         if (state == State.Paused)
@@ -167,7 +188,4 @@ public class GameScreenDD extends Screen
     {
 
     }
-
-
-
 }
