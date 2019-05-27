@@ -45,11 +45,17 @@ public class MultiTouchHandler implements TouchHandler, View.OnTouchListener
                 touchEvent.type = TouchEvent.TouchEventType.Down;
                 touchEvent.pointer = pointerId;
 
-                touchEvent.x = (int)event.getX(pointerId);
-                touchX[pointerId] = touchEvent.x;
+                try
+                {
+                    touchEvent.x = (int)event.getX(pointerId);
+                    touchX[pointerId] = touchEvent.x;
 
-                touchEvent.y = (int)event.getY(pointerId);
-                touchY[pointerId] = touchEvent.y;
+                    touchEvent.y = (int)event.getY(pointerId);
+                    touchY[pointerId] = touchEvent.y;
+                } catch (IllegalArgumentException e)
+                {
+                    break;
+                }
 
                 isTouched[pointerId] = true;
 

@@ -47,6 +47,11 @@ public class World
 
     public void update(float deltaTime)
     {
+
+        if(!p1Alive && !p2Alive)
+        {
+            gameOver = true;
+        }
         if(p1Alive)
         {
             //Player 1 jump movement
